@@ -250,6 +250,7 @@ export function createTmLockWallet(privateKey: HexString): Wallet {
 
     // 2. Convert TransactionSkeleton to Transaction
     const tx = helpers.createTransactionFromSkeleton(txSkeleton);
+    console.log(JSON.stringify(tx, null, 4))
 
     // 3. Send transaction
     const rpc = new RPC(config.ckbNodeUrl);

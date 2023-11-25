@@ -1,11 +1,27 @@
+import { common } from '@ckb-lumos/common-scripts';
 import { transferSpore } from '@spore-sdk/core';
-import { config } from './tmConfig';
+import { setupInputCell } from './tmBuild';
+import { config, configTypedMessageLockDemo } from './tmConfig';
 import { tmAccounts } from './tmWallet';
+const { registerCustomLockScriptInfos } = common;
 
 async function main() {
+    registerCustomLockScriptInfos([
+        {
+            codeHash: configTypedMessageLockDemo.script.codeHash,
+            hashType: configTypedMessageLockDemo.script.hashType,
+            lockScriptInfo: {
+                CellCollector: null,
+                setupInputCell: setupInputCell,
+                prepareSigningEntries: null,
+                setupOutputCell: null,
+            },
+        },
+    ])
+
     let { txSkeleton } = await transferSpore({
         outPoint: {
-            txHash: '0xb83fa0529c76fede0531b211ddf61a689f52470584d9f487cd6c40a7df7cec53',
+            txHash: '0x16bd44f98150c03249f679877e147c4aee2b97557eaab3c16ce5906a5929b4be',
             index: '0x0',
         },
         toLock: tmAccounts.bob.lock,
