@@ -8,7 +8,7 @@ use blake2b::new_blake2b;
 use ckb_std::{
     ckb_constants::Source,
     error::SysError,
-    high_level::{load_input_since, load_tx_hash, load_witness, QueryIter},
+    high_level::{load_input_since, load_tx_hash, load_witness, QueryIter, encode_hex}, debug,
 };
 use core::convert::Into;
 use molecule::{
@@ -108,12 +108,15 @@ pub fn check_others_in_group() -> Result<(), Error> {
 //
 pub fn generate_skeleton_hash() -> Result<[u8; 32], Error> {
     let mut hasher = new_blake2b();
+    debug!("tx_hash {:?}", encode_hex(load_tx_hash()?.as_slice()));
     hasher.update(&load_tx_hash()?);
 
     let mut i = calculate_inputs_len()?;
+    debug!("inputs_len {:?}", i);
     loop {
         match load_witness(i, Source::Input) {
             Ok(w) => {
+                debug!("hash_witness {:?}", encode_hex(&w));
                 hasher.update(&(w.len() as u64).to_le_bytes());
                 hasher.update(&w);
             }
@@ -201,6 +204,10 @@ pub fn parse_typed_message() -> Result<([u8; 32], Vec<u8>), Error> {
         }
     };
     let skeleton_hash = generate_skeleton_hash()?;
+    debug!("skeleton_hash {:?}", encode_hex(&skeleton_hash));
+    debug!("typed_message {:?}", encode_hex(typed_message.as_slice()));
     let digest_message = generate_final_hash(&skeleton_hash, typed_message.as_slice());
+    debug!("digest_message {:?}", encode_hex(&digest_message));
+    debug!("lock {:?}", encode_hex(&lock.raw_data()));
     Ok((digest_message, lock.raw_data().into()))
 }
