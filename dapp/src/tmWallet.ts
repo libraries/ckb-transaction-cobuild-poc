@@ -277,13 +277,13 @@ export function createTmLockWallet(privateKey: HexString): Wallet {
   // Sign the transaction and send it via RPC
   async function signAndSendTransaction(txSkeleton: helpers.TransactionSkeletonType): Promise<Hash> {
     // 1. Sign transaction
-    txSkeleton = prepareSigningEntries(txSkeleton, config.lumos, 'SECP256K1_BLAKE160');
-    txSkeleton = signTransaction(txSkeleton);
+    // txSkeleton = prepareSigningEntries(txSkeleton, config.lumos, 'SECP256K1_BLAKE160');
+    // txSkeleton = signTransaction(txSkeleton);
 
     let witnesses = List<string>()
 
     let r = SighashWithAction.pack({
-      lock: configTypedMessageLockDemo.script.codeHash, // 用于占位
+      lock: '0x39e370ad1e0ddf2717c78e8e4999f01d064936017ae83e26f6737702d29f468f75fec0aa2aa6fe78c27abc6db013acb3d0e5d1fbf911169faa3a4ac98f39e74800', // 用于占位
       message: {
         type: "TypedMessageV1",
         value: [{
@@ -307,9 +307,7 @@ export function createTmLockWallet(privateKey: HexString): Wallet {
     let digestMessage = generateFinalHash(skeletonHash, typedMessage)
     console.log('digestMessage', digestMessage)
 
-    console.log(signMessage(digestMessage))
-
-    console.log(JSON.stringify(txSkeleton.toJS(), null, 4))
+    // console.log(JSON.stringify(txSkeleton.toJS(), null, 4))
 
     // 2. Convert TransactionSkeleton to Transaction
     const tx = helpers.createTransactionFromSkeleton(txSkeleton);
