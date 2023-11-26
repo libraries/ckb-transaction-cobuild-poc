@@ -3,6 +3,7 @@ import { transferSpore } from '@spore-sdk/core';
 import { setupInputCell } from './tmBuild';
 import { config, configTypedMessageLockDemo } from './tmConfig';
 import { tmAccounts } from './tmWallet';
+import { BI } from '@ckb-lumos/lumos';
 const { registerCustomLockScriptInfos } = common;
 
 async function main() {

@@ -6,8 +6,14 @@ import { Config } from "@ckb-lumos/config-manager";
 import { TransactionSkeletonType, createTransactionFromSkeleton } from "@ckb-lumos/helpers";
 import { RPC, hd, helpers } from '@ckb-lumos/lumos';
 import { defaultEmptyWitnessArgs, isScriptValueEquals, updateWitnessArgs } from '@spore-sdk/core';
-import { Set } from "immutable";
+import { Set, List } from "immutable";
 import { config, configTypedMessageLockDemo } from './tmConfig';
+import { SighashWithAction, TypedMessage, TypedMessageV1 } from './tmMolecule';
+import {
+  molecule,
+  number,
+} from "@ckb-lumos/codec";
+const { Uint64, Uint32 } = number;
 
 const { CKBHasher, ckbHash } = utils;
 
@@ -187,6 +193,32 @@ export function prepareSigningEntries(
   return txSkeleton;
 }
 
+export function generateSkeletonHash(txSkeleton: TransactionSkeletonType): HexString {
+  let data = ''
+
+  const tx = createTransactionFromSkeleton(txSkeleton);
+  const txHash = ckbHash(blockchain.RawTransaction.pack(tx));
+  console.log('txHash', txHash)
+  data += txHash
+
+  for (let i = txSkeleton.inputs.size; i < txSkeleton.witnesses.size; i++) {
+    const witness = txSkeleton.witnesses.get(i)
+    console.log('hashWitness', witness)
+    data += bytes.hexify(Uint32.pack(witness.length / 2 - 1)).slice(2)
+    data += witness.slice(2)
+  }
+  return ckbHash(data)
+}
+
+export function generateFinalHash(skeletonHash: HexString, typedMessage: HexString): HexString {
+  let data = ''
+  data += skeletonHash
+  data += bytes.hexify(Uint64.pack(typedMessage.length / 2 - 1)).slice(2)
+  data += typedMessage.slice(2)
+  return ckbHash(data)
+}
+
+
 /**
  * Create a CKB Default Lock (Secp256k1Blake160 Sign-all) Wallet by a private-key and a SporeConfig,
  * providing lock/address, and functions to sign message/transaction and send the transaction on-chain.
@@ -248,9 +280,40 @@ export function createTmLockWallet(privateKey: HexString): Wallet {
     txSkeleton = prepareSigningEntries(txSkeleton, config.lumos, 'SECP256K1_BLAKE160');
     txSkeleton = signTransaction(txSkeleton);
 
+    let witnesses = List<string>()
+
+    let r = SighashWithAction.pack({
+      lock: configTypedMessageLockDemo.script.codeHash, // 用于占位
+      message: {
+        type: "TypedMessageV1",
+        value: [{
+          scriptHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
+          action: {
+            infoHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
+            data: '0x1234567890'
+          }
+        }],
+      },
+    })
+    witnesses = witnesses.set(0, '0x010000ff' + bytes.hexify(r).slice(2))
+    txSkeleton = txSkeleton.set('witnesses', witnesses)
+    let extraFee = (witnesses.get(0).length - 2) / 2 - 85
+    txSkeleton.outputs.get(0).cellOutput.capacity = '0x' + (parseInt(txSkeleton.outputs.get(0).cellOutput.capacity, 16) - extraFee).toString(16)
+
+    let skeletonHash = generateSkeletonHash(txSkeleton)
+    console.log('skeletonHash', skeletonHash)
+    let typedMessage = bytes.hexify(TypedMessage.pack(SighashWithAction.unpack(r).message))
+    console.log('typedMessage', typedMessage)
+    let digestMessage = generateFinalHash(skeletonHash, typedMessage)
+    console.log('digestMessage', digestMessage)
+
+    console.log(signMessage(digestMessage))
+
+    console.log(JSON.stringify(txSkeleton.toJS(), null, 4))
+
     // 2. Convert TransactionSkeleton to Transaction
     const tx = helpers.createTransactionFromSkeleton(txSkeleton);
-    console.log(JSON.stringify(tx, null, 4))
+    // console.log(JSON.stringify(tx, null, 4))
 
     // 3. Send transaction
     const rpc = new RPC(config.ckbNodeUrl);
