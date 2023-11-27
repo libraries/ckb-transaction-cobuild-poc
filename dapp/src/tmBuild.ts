@@ -1,30 +1,19 @@
-import { Set } from "immutable";
 import {
-    parseAddress,
-    minimalCellCapacityCompatible,
-    TransactionSkeletonType,
-    Options,
-} from "@ckb-lumos/helpers";
-import { bytes } from "@ckb-lumos/codec";
-import {
-    values,
-    Address,
     Cell,
-    WitnessArgs,
-    CellCollector as CellCollectorType,
-    Script,
-    CellProvider,
-    QueryOptions,
-    OutPoint,
+    CellDep,
     HexString,
     PackedSince,
+    WitnessArgs,
     blockchain,
+    values,
 } from "@ckb-lumos/base";
-import { getConfig, Config } from "@ckb-lumos/config-manager";
-import { parseFromInfo, FromInfo, CellCollectorConstructor } from "@ckb-lumos/common-scripts";
-import { BI, BIish } from "@ckb-lumos/bi";
-import { CellDep } from "@ckb-lumos/base";
-import { config, configAuth, configTypedMessageLockDemo } from './tmConfig';
+import { bytes } from "@ckb-lumos/codec";
+import { FromInfo } from "@ckb-lumos/common-scripts";
+import {
+    Options,
+    TransactionSkeletonType,
+} from "@ckb-lumos/helpers";
+import { configAuth, config as configLumos, configTypedMessageLockDemo } from './tmConfig';
 const { ScriptValue } = values;
 
 export const SECP_SIGNATURE_PLACEHOLDER = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
@@ -67,8 +56,7 @@ export async function setupInputCell(
         since?: PackedSince;
     } = {}
 ): Promise<TransactionSkeletonType> {
-    config = config || getConfig();
-
+    config = configLumos.lumos
     const fromScript = inputCell.cellOutput.lock;
     // if (!isSecp256k1Blake160Script(fromScript, config)) {
     //   throw new Error(`Not SECP256K1_BLAKE160 input!`);
@@ -113,6 +101,13 @@ export async function setupInputCell(
     // };
 
     // add cell dep
+    txSkeleton = addCellDep(txSkeleton, {
+        outPoint: {
+            txHash: config.SCRIPTS.SECP256K1_BLAKE160.TX_HASH,
+            index: config.SCRIPTS.SECP256K1_BLAKE160.INDEX,
+        },
+        depType: config.SCRIPTS.SECP256K1_BLAKE160.DEP_TYPE,
+    })
     txSkeleton = addCellDep(txSkeleton, {
         outPoint: configAuth.cellDep.outPoint,
         depType: configAuth.cellDep.depType,

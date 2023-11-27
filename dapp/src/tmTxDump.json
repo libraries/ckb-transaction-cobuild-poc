@@ -30,6 +30,66 @@
             {
                 "cell_dep": {
                     "out_point": {
+                        "tx_hash": "0x44b3212de8c8b1aaabf241c3526bf44264e8acbda0cb9ac353d4bd07fc34021e",
+                        "index": "0x3"
+                    },
+                    "dep_type": "code"
+                },
+                "output": {
+                    "capacity": "0x3b9b62bca5a00",
+                    "lock": {
+                        "code_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                        "hash_type": "data",
+                        "args": "0x"
+                    },
+                    "type": null
+                },
+                "data": "0x{{ data ./binSecp256k1Index3 }}",
+                "header": null
+            },
+            {
+                "cell_dep": {
+                    "out_point": {
+                        "tx_hash": "0x44b3212de8c8b1aaabf241c3526bf44264e8acbda0cb9ac353d4bd07fc34021e",
+                        "index": "0x1"
+                    },
+                    "dep_type": "code"
+                },
+                "output": {
+                    "capacity": "0x5af3107a4000",
+                    "lock": {
+                        "code_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                        "hash_type": "data",
+                        "args": "0x"
+                    },
+                    "type": null
+                },
+                "data": "0x{{ data ./binSecp256k1Index1 }}",
+                "header": null
+            },
+            {
+                "cell_dep": {
+                    "out_point": {
+                        "tx_hash": "0x94dfbac7f4ccb5b1f41b1cc314abae9df3f85108af214c5aaff569c8ada0885e",
+                        "index": "0x0"
+                    },
+                    "dep_type": "dep_group"
+                },
+                "output": {
+                    "capacity": "0x1b3dbe5200",
+                    "lock": {
+                        "code_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                        "hash_type": "data",
+                        "args": "0x"
+                    },
+                    "type": null
+                },
+                "data": "0x0200000044b3212de8c8b1aaabf241c3526bf44264e8acbda0cb9ac353d4bd07fc34021e0300000044b3212de8c8b1aaabf241c3526bf44264e8acbda0cb9ac353d4bd07fc34021e01000000",
+                "header": null
+            },
+            {
+                "cell_dep": {
+                    "out_point": {
                         "tx_hash": "0x27ce6f8e9032d40334948904b5a769587eaf0d8e79e1b51a80c9ba0616e102f2",
                         "index": "0x0"
                     },
@@ -93,6 +153,13 @@
     "tx": {
         "version": "0x0",
         "cell_deps": [
+            {
+                "out_point": {
+                    "tx_hash": "0x94dfbac7f4ccb5b1f41b1cc314abae9df3f85108af214c5aaff569c8ada0885e",
+                    "index": "0x0"
+                },
+                "dep_type": "dep_group"
+            },
             {
                 "out_point": {
                     "tx_hash": "0x27ce6f8e9032d40334948904b5a769587eaf0d8e79e1b51a80c9ba0616e102f2",
