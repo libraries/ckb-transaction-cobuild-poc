@@ -1,13 +1,14 @@
 use ckb_std::{
     ckb_types::{bytes::Bytes, core::ScriptHashType, prelude::*},
-    high_level::load_script,
+    debug,
+    high_level::{encode_hex, load_script},
 };
 use ckb_typed_message::parse_typed_message;
 use core::result::Result;
 
 use crate::error::Error;
 use ckb_auth_rs::{
-    ckb_auth::{ckb_auth, CkbEntryType},
+    ckb_auth, CkbEntryType,
     AuthAlgorithmIdType, CkbAuthType, EntryCategoryType,
 };
 
@@ -24,6 +25,7 @@ pub fn main() -> Result<(), Error> {
     let args: Bytes = script.args().unpack();
     pubkey_hash.copy_from_slice(&args[0..20]);
 
+    debug!("pubkey_hash {:?}", encode_hex(&pubkey_hash));
     let id = CkbAuthType {
         algorithm_id: AuthAlgorithmIdType::Ckb,
         pubkey_hash,
@@ -35,7 +37,9 @@ pub fn main() -> Result<(), Error> {
         entry_category: EntryCategoryType::DynamicLinking,
     };
 
-    ckb_auth(&entry, &id, &lock, &digest_message).map_err(|_| Error::AuthError)?;
+    let r = ckb_auth(&entry, &id, &lock, &digest_message);
+    debug!("ckb_auth_result {:?}", r);
+    r.map_err(|_| Error::AuthError)?;
 
     Ok(())
 }
