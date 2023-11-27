@@ -307,7 +307,7 @@ export function createTmLockWallet(privateKey: HexString): Wallet {
     let digestMessage = generateFinalHash(skeletonHash, typedMessage)
     console.log('digestMessage', digestMessage)
 
-    // console.log(JSON.stringify(txSkeleton.toJS(), null, 4))
+    console.log(JSON.stringify(txSkeleton.toJS(), null, 4))
 
     // 2. Convert TransactionSkeleton to Transaction
     const tx = helpers.createTransactionFromSkeleton(txSkeleton);
