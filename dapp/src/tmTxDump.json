@@ -10,7 +10,7 @@
                     }
                 },
                 "output": {
-                    "capacity": "0x847b0afa00",
+                    "capacity": "0xd3f811900",
                     "lock": {
                         "code_hash": "0x{{ ref_type typed-message-lock-demo }}",
                         "hash_type": "type",
