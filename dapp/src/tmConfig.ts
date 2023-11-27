@@ -170,13 +170,13 @@ export const configAuth = {
 
 export const configTypedMessageLockDemo = {
     script: {
-        codeHash: '0xcf37fcee5e82ead0393c3aad78a7560a6f242fcc7d64aa2e6324de875ef1f2d5',
+        codeHash: '0xd570d58cc814e5417b42dce11a1432415d293089418d3d1e0ba7ee689603a03a',
         hashType: 'data1' as HashType,
     },
     cellDep: {
         outPoint: {
-            txHash: '0x27ce6f8e9032d40334948904b5a769587eaf0d8e79e1b51a80c9ba0616e102f2',
-            index: '0x1',
+            txHash: '0xa1591400c8280b3702b9a119e6e83ca30063a8be885f3d9960efebaaf552f6fa',
+            index: '0x0',
         },
         depType: 'code' as DepType,
     }
