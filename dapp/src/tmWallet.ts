@@ -314,11 +314,9 @@ export function createTmLockWallet(privateKey: HexString): Wallet {
     witnesses = witnesses.set(0, witnessIndex0)
     txSkeleton = txSkeleton.set('witnesses', witnesses)
 
-    console.log(JSON.stringify(txSkeleton.toJS(), null, 4))
-
     // 2. Convert TransactionSkeleton to Transaction
     const tx = helpers.createTransactionFromSkeleton(txSkeleton);
-    // console.log(JSON.stringify(tx, null, 4))
+    console.log(JSON.stringify(tx, null, 4))
 
     // 3. Send transaction
     const rpc = new RPC(config.ckbNodeUrl);
